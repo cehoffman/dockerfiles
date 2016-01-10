@@ -1,0 +1,3 @@
+[template]
+src = "powerdns-admin.py.tmpl"
+dest = "/opt/local/powerdns-admin/config.py"

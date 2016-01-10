@@ -1,0 +1,33 @@
+import os
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+# BASIC APP CONFIG
+WTF_CSRF_ENABLED = True
+SECRET_KEY = '{{ getenv "PDNS_ADMIN_SECRET" }}'
+PORT = 80
+
+# LOG CONFIG 
+LOG_LEVEL = '{{ getenv "PDNS_ADMIN_LOG_LEVEL" }}'
+LOG_FILE = '/dev/null'
+
+# Upload
+UPLOAD_DIR = os.path.join(basedir, 'upload')
+
+# DATABASE CONFIG
+SQLALCHEMY_DATABASE_URI = 'postgresql://{{ getenv "DB_ENV_POSTGRES_USER" }}:{{ getenv "DB_ENV_POSTGRES_PASSWORD" }}@{{ getenv "DB_PORT_5432_TCP_ADDR" }}/powerdnsadmin'
+SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
+SQLALCHEMY_TRACK_MODIFICATIONS = True
+
+# LDAP CONFIG
+LDAP_URI = '{{ getenv "LDAP_URI" }}'
+LDAP_USERNAME = '{{ getenv "LDAP_USER" }}'
+LDAP_PASSWORD = '{{ getenv "LDAP_PASSWORD" }}'
+LDAP_SEARCH_BASE = '{{ getenv "LDAP_SEARCH" }}'
+
+# POWERDNS CONFIG
+PDNS_STATS_URL = 'http://{{ getenv "PDNS_PORT_53_TCP_ADDR" }}:80'
+PDNS_API_KEY = '{{ getenv "PDNS_ENV_PDNS_API_KEY" }}'
+
+# RECORDS ALLOWED TO EDIT
+# If you change these values, please change in ./static/admin/pages/scripts/table-editable.js also
+RECORDS_ALLOW_EDIT = ['A', 'AAAA', 'CNAME', 'SPF', 'PTR', 'MX', 'TXT']

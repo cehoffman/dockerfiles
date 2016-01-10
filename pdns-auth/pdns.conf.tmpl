@@ -613,12 +613,10 @@ webserver-allow-from={{.}}
 webserver-password={{.}}
 
 {{ end }}
-{{ with getenv "PDNS_WEBSERVER_PORT" }}
 #################################
 # webserver-port	Port of webserver to listen on
-webserver-port={{.}}
+webserver-port=80
 
-{{ end }}
 {{ with getenv "PDNS_WEBSERVER_PRINT_ARGUMENTS" }}
 #################################
 # webserver-print-arguments	If the webserver should print arguments

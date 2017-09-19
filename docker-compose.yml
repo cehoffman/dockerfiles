@@ -1,0 +1,106 @@
+---
+version: '3'
+services:
+  db:
+    image: quay.io/cehoffman/pdns-postgres
+    restart: always
+    env_file:
+      - pdns-postgres.env
+    volumes:
+      - pdns-db:/var/lib/postgresql/data
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+    networks:
+      - dns
+  pdns:
+    image: quay.io/cehoffman/pdns-auth
+    restart: always
+    depends_on:
+      - db
+    env_file:
+      - pdns-auth.env
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+    networks:
+      dns:
+        ipv4_address: 10.29.21.5
+  ui:
+    image: quay.io/cehoffman/pdns-ui
+    restart: always
+    depends_on:
+      - pdns
+      - db
+    env_file:
+      - pdns-ui.env
+    volumes:
+      - ui-data:/opt/local/powerdns-admin/data
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+    networks:
+      - dns
+    ports:
+      - "80:80"
+  rec:
+    image: quay.io/cehoffman/pdns-recursor
+    restart: always
+    depends_on:
+      - pdns
+    env_file:
+      - pdns-recursor.env
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+    networks:
+      - dns
+    ports:
+      - "53:53/udp"
+      - "53:53"
+networks:
+  dns:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.29.21.0/24
+volumes:
+  pdns-db:
+  ui-data:
+# registry:
+#   image: ceh.im/cehoffman/registry
+#   dns:
+#     - 172.17.0.5
+#   ports:
+#     - 443:5000
+#   environment:
+#     REGISTRY_LOG_FIELDS_ENVIRONMENT: production
+#   env_file:
+#     - registry.env
+# portus:
+#   image: ceh.im/cehoffman/portus
+#   dns:
+#     - 172.17.0.5
+#   environment:
+#     PORTUS_PRODUCTION_HOST: portus_db
+#     PORTUS_MACHINE_FQDN: registry.ceh.im
+#   ports:
+#     - 3000:3000
+#   env_file:
+#     - portus.env
+#     - portus-db.env
+#   links:
+#     - portus_db
+# portus_db:
+#   image: mariadb:10.1.10
+#   env_file:
+#     - mysql.env
+#     - portus-db.env

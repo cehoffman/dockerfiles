@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+
+case "$1" in
+  restore)
+    cd "$(ls -1t backups | head -n1)"
+    docker exec -i build_db_1 psql -U pdns --db pdns < pdnsadmin.sql
+    docker exec -i build_db_1 psql -U pdns --db powerdnsadmin < pdnsadmin.sql
+    docker exec -i build_ui_1 tar -zxvf - -C /opt/local/powerdns-admin < ui.tar.gz
+    ;;
+  *)
+    folder="backups/$(date +%Y-%m-%d)"
+    mkdir -p "${folder}" 
+    docker exec build_db_1 pg_dump -U pdns --db pdns --clean --create --blobs > "${folder}"/pdns.sql
+    docker exec build_db_1 pg_dump -U pdns --db powerdnsadmin --clean --create --blobs > "${folder}"/pdnsadmin.sql
+    docker exec build_ui_1 tar -zcvf - -C /opt/local/powerdns-admin data > "${folder}"/ui.tar.gz
+    ;;
+esac

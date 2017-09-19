@@ -8,7 +8,7 @@ RUN rm -rf /var/lib/apt/lists/* && { \
         echo Pin: origin repo.powerdns.com; \
         echo Pin-Priority: 600; \
     } > /etc/apt/preferences.d/pdns && \
-    wget -O- https://repo.powerdns.com/FD380FBB-pub.asc | apt-key add - && \
+    wget -qO- https://repo.powerdns.com/FD380FBB-pub.asc | apt-key add - && \
     apt-get update && \
     apt-get install -y --no-install-recommends pdns-recursor pdns-server pdns-backend-pgsql && \
     rm -rf /var/lib/apt/lists/*

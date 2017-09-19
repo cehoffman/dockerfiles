@@ -1,3 +1,3 @@
-FROM postgres:9.5
+FROM postgres:9.6
 
 COPY pdns.sql /docker-entrypoint-initdb.d/

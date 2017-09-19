@@ -11,7 +11,7 @@ RUN apt-get update && \
       python-dev \
       python-pip && \
     mkdir -p /opt/local/powerdns-admin && cd /opt/local/powerdns-admin && \
-    wget -O- https://github.com/ngoduykhanh/PowerDNS-Admin/archive/3fe28d1151225bb3918a77e41472a8571adf42a1.tar.gz | tar -zxf - --strip-components=1 && \
+    wget -qO- https://github.com/ngoduykhanh/PowerDNS-Admin/archive/e49510c028bec908306e0578523783898a992936.tar.gz | tar -zxf - --strip-components=1 && \
     pip install virtualenv && \
     virtualenv flask && \
     . flask/bin/activate && \

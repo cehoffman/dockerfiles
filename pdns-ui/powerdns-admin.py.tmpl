@@ -5,7 +5,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 WTF_CSRF_ENABLED = True
 SECRET_KEY = '{{ getenv "PDNS_ADMIN_SECRET" }}'
 PORT = 80
-LOGIN_TITLE = '{{ getenv "LOGIN_TITLE" }}'
+LOGIN_TITLE = '{{ getenv "LOGIN_TITLE" "PDNS" }}'
 
 TIMEOUT = 10
 
@@ -14,11 +14,11 @@ LOG_LEVEL = '{{ getenv "PDNS_ADMIN_LOG_LEVEL" }}'
 LOG_FILE = ''
 
 # Upload
-UPLOAD_DIR = os.path.join(basedir, 'upload')
+UPLOAD_DIR = os.path.join(basedir, 'data', 'upload')
 
 # DATABASE CONFIG
 SQLALCHEMY_DATABASE_URI = 'postgresql://{{ getenv "POSTGRES_USER" }}:{{ getenv "POSTGRES_PASSWORD" }}@{{ getenv "POSTGRES_HOST" }}/powerdnsadmin'
-SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
+SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'data', 'db_repository')
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 # LDAP CONFIG

@@ -1,6 +1,8 @@
 FROM debian:jessie
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV GOSU_VERSION 1.10
+ENV CONFD_VERSION 0.13.0
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends locales && \
@@ -14,9 +16,9 @@ RUN gpg --keyserver pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4
     apt-get install -y --no-install-recommends ca-certificates wget && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir -p /etc/confd/{conf.d,templates} && \
-    wget -O /usr/local/bin/confd https://github.com/kelseyhightower/confd/releases/download/v0.11.0/confd-0.11.0-linux-amd64 && \
-    wget -O /usr/local/bin/gosu http://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture) && \
-    wget -O /usr/local/bin/gosu.asc http://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture).asc && \
+    wget -O /usr/local/bin/confd https://github.com/kelseyhightower/confd/releases/download/v${CONFD_VERSION}/confd-${CONFD_VERSION}-linux-amd64 && \
+    wget -O /usr/local/bin/gosu http://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture) && \
+    wget -O /usr/local/bin/gosu.asc http://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc && \
     gpg --verify /usr/local/bin/gosu.asc && \
     rm /usr/local/bin/gosu.asc && \
     chmod +x /usr/local/bin/gosu /usr/local/bin/confd && \

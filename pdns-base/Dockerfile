@@ -1,8 +1,8 @@
 FROM quay.io/cehoffman/debian
 
 RUN rm -rf /var/lib/apt/lists/* && { \
-        echo deb http://repo.powerdns.com/debian jessie-auth-40 main; \
-        echo deb http://repo.powerdns.com/debian jessie-rec-40 main; \
+        echo deb http://repo.powerdns.com/debian buster-auth-44 main; \
+        echo deb http://repo.powerdns.com/debian buster-rec-44 main; \
     } > /etc/apt/sources.list.d/pdns.list && { \
         echo Package: pdns-*; \
         echo Pin: origin repo.powerdns.com; \

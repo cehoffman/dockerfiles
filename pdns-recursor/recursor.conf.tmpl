@@ -9,6 +9,12 @@ allow-from={{.}}
 # allow-from-file	If set, load allowed netmasks from this file
 # allow-from-file=
 
+{{ with getenv "RECURSOR_ALLOW_TRUST_ANCHOR_QUERY" }}
+#################################
+# allow-trust-anchor-query	Allow queries for trustanchor.server CH TXT and negativetrustanchor.server CH TXT
+allow-trust-anchor-query={{.}}
+
+{{ end }}
 {{ with getenv "RECURSOR_ANY_TO_TCP" }}
 #################################
 # any-to-tcp	Answer ANY queries with tc=1, shunting to TCP
@@ -25,31 +31,28 @@ any-to-tcp={{.}}
 api-key={{.}}
 
 {{ end }}
-{{ with getenv "RECURSOR_API_LOGFILE" }}
-#################################
-# api-logfile	Location of the server logfile (used by the REST API)
-api-logfile={{.}}
-
-{{ else }}
-api-logfile=/dev/stdout
-
-{{ end }}
-{{ with getenv "RECURSOR_API_READONLY" }}
-#################################
-# api-readonly	Disallow data modification through the REST API when set
-api-readonly={{.}}
-
-{{ end }}
 {{ with getenv "RECURSOR_AUTH_ZONES" }}
 #################################
 # auth-zones	Zones for which we have authoritative data, comma separated domain=file pairs 
 auth-zones={{.}}
 
 {{ end }}
+{{ with getenv "RECURSOR_CARBON_INSTANCE" }}
+#################################
+# carbon-instance	If set overwrites the the instance name default
+carbon-instance={{.}}
+
+{{ end }}
 {{ with getenv "RECURSOR_CARBON_INTERVAL" }}
 #################################
 # carbon-interval	Number of seconds between carbon (graphite) updates
 carbon-interval={{.}}
+
+{{ end }}
+{{ with getenv "RECURSOR_CARBON_NAMESPACE" }}
+#################################
+# carbon-namespace	If set overwrites the first part of the carbon string
+carbon-namespace={{.}}
 
 {{ end }}
 {{ with getenv "RECURSOR_CARBON_OURNAME" }}
@@ -86,6 +89,11 @@ config-dir=/etc/powerdns/
 # config-name=
 
 #################################
+# cpu-map	Thread to CPU mapping, space separated thread-id=cpu1,cpu2..cpuN pairs
+#
+# cpu-map=
+
+#################################
 # daemon	Operate as a daemon
 #
 daemon=no
@@ -107,9 +115,29 @@ disable-packetcache={{.}}
 #
 disable-syslog=yes
 
+#################################
+# distribution-load-factor	The load factor used when PowerDNS is distributing queries to worker threads
+#
+# distribution-load-factor=0.0
+
+#################################
+# distribution-pipe-buffer-size	Size in bytes of the internal buffer of the pipe used by the distributor to pass incoming queries to a worker thread
+#
+# distribution-pipe-buffer-size=0
+
+#################################
+# distributor-threads	Launch this number of distributor threads, distributing queries to other threads
+#
+# distributor-threads=0
+
+#################################
+# dns64-prefix	DNS64 prefix
+#
+# dns64-prefix=
+
 {{ with getenv "RECURSOR_DNSSEC" }}
 #################################
-# dnssec	DNSSEC mode: off/process (default)/log-fail/validate
+# dnssec	DNSSEC mode: off/process-no-validate (default)/process/log-fail/validate
 dnssec={{.}}
 
 {{ end }}
@@ -126,6 +154,26 @@ dnssec-log-bogus={{.}}
 dont-query={{.}}
 
 {{ end }}
+#################################
+# dont-throttle-names	Do not throttle nameservers with this name or suffix
+#
+# dont-throttle-names=
+
+#################################
+# dont-throttle-netmasks	Do not throttle nameservers with this IP netmask
+#
+# dont-throttle-netmasks=
+
+#################################
+# ecs-add-for	List of client netmasks for which EDNS Client Subnet will be added
+#
+# ecs-add-for=0.0.0.0/0, ::/0, !127.0.0.0/8, !10.0.0.0/8, !100.64.0.0/10, !169.254.0.0/16, !192.168.0.0/16, !172.16.0.0/12, !::1/128, !fc00::/7, !fe80::/10
+
+#################################
+# ecs-cache-limit-ttl	Minimum TTL to cache ECS response
+#
+# ecs-cache-limit-ttl=0
+
 {{ with getenv "RECURSOR_ECS_IPV4_BITS" }}
 #################################
 # ecs-ipv4-bits	Number of bits of IPv4 address to pass for EDNS Client Subnet
@@ -133,6 +181,11 @@ dont-query={{.}}
 ecs-ipv4-bits={{.}}
 
 {{ end }}
+#################################
+# ecs-ipv4-cache-bits	Maximum number of bits of IPv4 mask to cache ECS response
+#
+# ecs-ipv4-cache-bits=24
+
 {{ with getenv "RECURSOR_ECS_IPV6_BITS" }}
 #################################
 # ecs-ipv6-bits	Number of bits of IPv6 address to pass for EDNS Client Subnet
@@ -140,6 +193,21 @@ ecs-ipv4-bits={{.}}
 ecs-ipv6-bits={{.}}
 
 {{ end }}
+#################################
+# ecs-ipv6-cache-bits	Maximum number of bits of IPv6 mask to cache ECS response
+#
+# ecs-ipv6-cache-bits=56
+
+#################################
+# ecs-minimum-ttl-override	Set under adverse conditions, a minimum TTL for records in ECS-specific answers
+#
+# ecs-minimum-ttl-override=0
+
+#################################
+# ecs-scope-zero-address	Address to send to whitelisted authoritative servers for incoming queries with ECS prefix-length source of 0
+#
+# ecs-scope-zero-address=
+
 {{ with getenv "RECURSOR_EDNS_OUTGOING_BUFSIZE" }}
 #################################
 # edns-outgoing-bufsize	Outgoing EDNS buffer size
@@ -198,14 +266,21 @@ forward-zones-recurse={{.}}
 
 {{ end }}
 #################################
+# gettag-needs-edns-options	If EDNS Options should be extracted before calling the gettag() hook
+#
+# gettag-needs-edns-options=no
+
+#################################
 # hint-file	If set, load root hints from this file
 #
 # hint-file=
+hint-file=/usr/share/dns/root.hints
 
 #################################
 # include-dir	Include *.conf files from this directory
 #
 # include-dir=
+include-dir=/etc/powerdns/recursor.d
 
 {{ with getenv "RECURSOR_LATENCY_STATISTIC_SIZE" }}
 #################################
@@ -234,6 +309,16 @@ local-port={{.}}
 log-common-errors={{.}}
 
 {{ end }}
+#################################
+# log-rpz-changes	Log additions and removals to RPZ zones at Info level
+#
+# log-rpz-changes=no
+
+#################################
+# log-timestamp	Print timestamps in log lines, useful to disable when running with a tool that timestamps stdout already
+#
+# log-timestamp=yes
+
 {{ with getenv "RECURSOR_LOGGING_FACILITY" }}
 #################################
 # logging-facility	Facility to log messages as. 0 corresponds to local0
@@ -257,11 +342,22 @@ lowercase-outgoing={{.}}
 # lua-config-file	More powerful configuration options
 #
 # lua-config-file=
+lua-config-file=/etc/powerdns/recursor.lua
 
 #################################
 # lua-dns-script	Filename containing an optional 'lua' script that will be used to modify dns answers
 #
 # lua-dns-script=
+
+#################################
+# lua-maintenance-interval	Number of seconds between calls to the lua user defined maintenance() function
+#
+# lua-maintenance-interval=1
+
+#################################
+# max-cache-bogus-ttl	maximum number of seconds to keep a Bogus (positive or negative) cached entry in memory
+#
+# max-cache-bogus-ttl=3600
 
 {{ with getenv "RECURSOR_MAX_CACHE_ENTRIES" }}
 #################################
@@ -275,6 +371,16 @@ max-cache-entries={{.}}
 max-cache-ttl={{.}}
 
 {{ end }}
+#################################
+# max-concurrent-requests-per-tcp-connection	Maximum number of requests handled concurrently per TCP connection
+#
+# max-concurrent-requests-per-tcp-connection=10
+
+#################################
+# max-generate-steps	Maximum number of $GENERATE steps when loading a zone from a file
+#
+# max-generate-steps=0
+
 {{ with getenv "RECURSOR_MAX_MTHREADS" }}
 #################################
 # max-mthreads	Maximum number of simultaneous Mtasker threads
@@ -318,12 +424,22 @@ max-tcp-clients={{.}}
 max-tcp-per-client={{.}}
 
 {{ end }}
+#################################
+# max-tcp-queries-per-connection	If set, maximum number of TCP queries in a TCP connection
+#
+# max-tcp-queries-per-connection=0
+
 {{ with getenv "RECURSOR_MAX_TOTAL_MSEC" }}
 #################################
 # max-total-msec	Maximum total wall-clock time per query in milliseconds, 0 for unlimited
 max-total-msec={{.}}
 
 {{ end }}
+#################################
+# max-udp-queries-per-round	Maximum number of UDP queries processed per recvmsg() round, before returning back to normal processing
+#
+# max-udp-queries-per-round=10000
+
 {{ with getenv "RECURSOR_MINIMUM_TTL_OVERRIDE" }}
 #################################
 # minimum-ttl-override	Set under adverse conditions, a minimum TTL
@@ -337,6 +453,41 @@ network-timeout={{.}}
 
 {{ end }}
 #################################
+# new-domain-db-size	Size of the DB used to track new domains in terms of number of cells. Defaults to 67108864
+#
+# new-domain-db-size=67108864
+
+#################################
+# new-domain-history-dir	Persist new domain tracking data here to persist between restarts
+#
+# new-domain-history-dir=/var/lib/pdns-recursor/nod
+
+#################################
+# new-domain-log	Log newly observed domains.
+#
+# new-domain-log=yes
+
+#################################
+# new-domain-lookup	Perform a DNS lookup newly observed domains as a subdomain of the configured domain
+#
+# new-domain-lookup=
+
+#################################
+# new-domain-pb-tag	If protobuf is configured, the tag to use for messages containing newly observed domains. Defaults to 'pdns-nod'
+#
+# new-domain-pb-tag=pdns-nod
+
+#################################
+# new-domain-tracking	Track newly observed domains (i.e. never seen before).
+#
+# new-domain-tracking=no
+
+#################################
+# new-domain-whitelist	List of domains (and implicitly all subdomains) which will never be considered a new domain
+#
+# new-domain-whitelist=
+
+#################################
 # no-shuffle	Don't change
 # no-shuffle=off
 
@@ -346,6 +497,16 @@ network-timeout={{.}}
 non-local-bind={{.}}
 
 {{ end }}
+#################################
+# nothing-below-nxdomain	When an NXDOMAIN exists in cache for a name with fewer labels than the qname, send NXDOMAIN without doing a lookup (see RFC 8020)
+#
+# nothing-below-nxdomain=dnssec
+
+#################################
+# nsec3-max-iterations	Maximum number of iterations allowed for an NSEC3 record
+#
+# nsec3-max-iterations=2500
+
 {{ with getenv "RECURSOR_PACKETCACHE_SERVFAIL_TTL" }}
 #################################
 # packetcache-servfail-ttl	maximum number of seconds to keep a cached servfail entry in packetcache
@@ -370,6 +531,31 @@ pdns-distributes-queries={{.}}
 # processes=1
 
 #################################
+# protobuf-use-kernel-timestamp	Compute the latency of queries in protobuf messages by using the timestamp set by the kernel when the query was received (when available)
+#
+# protobuf-use-kernel-timestamp=
+
+#################################
+# proxy-protocol-from	A Proxy Protocol header is only allowed from these subnets
+#
+# proxy-protocol-from=
+
+#################################
+# proxy-protocol-maximum-size	The maximum size of a proxy protocol payload, including the TLV values
+#
+# proxy-protocol-maximum-size=512
+
+#################################
+# public-suffix-list-file	Path to the Public Suffix List file, if any
+#
+# public-suffix-list-file=
+
+#################################
+# qname-minimization	Use Query Name Minimization
+#
+# qname-minimization=yes
+
+#################################
 # query-local-address	Source IP address for sending queries
 #
 # query-local-address=0.0.0.0
@@ -377,7 +563,7 @@ pdns-distributes-queries={{.}}
 #################################
 # query-local-address6	Source IPv6 address for sending queries. IF UNSET, IPv6 WILL NOT BE USED FOR OUTGOING QUERIES
 #
-# query-local-address6=
+query-local-address6=::
 
 {{ with getenv "RECURSOR_QUIET" }}
 #################################
@@ -385,15 +571,26 @@ pdns-distributes-queries={{.}}
 quiet={{.}}
 
 {{ end }}
+#################################
+# record-cache-shards	Number of shards in the record cache
+#
+# record-cache-shards=1024
+
 {{ with getenv "RECURSOR_REUSEPORT" }}
 #################################
 # reuseport	Enable SO_REUSEPORT allowing multiple recursors processes to listen to 1 address
-#
 reuseport={{.}}
+
 {{ else }}
 reuseport=yes
-{{ end }}
 
+{{ end }}
+{{ with getenv "RECURSOR_RNG" }}
+#################################
+# rng	Specify random number generator to use. Valid values are auto,sodium,openssl,getrandom,arc4random,urandom.
+rng={{.}}
+
+{{ end }}
 {{ with getenv "RECURSOR_ROOT_NX_TRUST" }}
 #################################
 # root-nx-trust	If set, believe that an NXDOMAIN from the root means the TLD does not exist
@@ -440,12 +637,27 @@ setgid=pdns
 #
 setuid=pdns
 
+#################################
+# signature-inception-skew	Allow the signature inception to be off by this number of seconds
+#
+# signature-inception-skew=60
+
 {{ with getenv "RECURSOR_SINGLE_SOCKET" }}
 #################################
 # single-socket	If set, only use a single socket for outgoing queries
 single-socket={{.}}
 
 {{ end }}
+#################################
+# snmp-agent	If set, register as an SNMP agent
+#
+# snmp-agent=no
+
+#################################
+# snmp-master-socket	If set and snmp-agent is set, the socket to use to register to the SNMP master
+#
+# snmp-master-socket=
+
 #################################
 # soa-minimum-ttl	Don't change
 #
@@ -482,10 +694,42 @@ single-socket={{.}}
 # stack-size=200000
 
 #################################
+# statistics-interval	Number of seconds between printing of recursor statistics, 0 to disable
+#
+# statistics-interval=1800
+
+#################################
+# stats-api-blacklist	List of statistics that are disabled when retrieving the complete list of statistics via the API
+#
+# stats-api-blacklist=cache-bytes, packetcache-bytes, special-memory-usage, ecs-v4-response-bits-1, ecs-v4-response-bits-2, ecs-v4-response-bits-3, ecs-v4-response-bits-4, ecs-v4-response-bits-5, ecs-v4-response-bits-6, ecs-v4-response-bits-7, ecs-v4-response-bits-8, ecs-v4-response-bits-9, ecs-v4-response-bits-10, ecs-v4-response-bits-11, ecs-v4-response-bits-12, ecs-v4-response-bits-13, ecs-v4-response-bits-14, ecs-v4-response-bits-15, ecs-v4-response-bits-16, ecs-v4-response-bits-17, ecs-v4-response-bits-18, ecs-v4-response-bits-19, ecs-v4-response-bits-20, ecs-v4-response-bits-21, ecs-v4-response-bits-22, ecs-v4-response-bits-23, ecs-v4-response-bits-24, ecs-v4-response-bits-25, ecs-v4-response-bits-26, ecs-v4-response-bits-27, ecs-v4-response-bits-28, ecs-v4-response-bits-29, ecs-v4-response-bits-30, ecs-v4-response-bits-31, ecs-v4-response-bits-32, ecs-v6-response-bits-1, ecs-v6-response-bits-2, ecs-v6-response-bits-3, ecs-v6-response-bits-4, ecs-v6-response-bits-5, ecs-v6-response-bits-6, ecs-v6-response-bits-7, ecs-v6-response-bits-8, ecs-v6-response-bits-9, ecs-v6-response-bits-10, ecs-v6-response-bits-11, ecs-v6-response-bits-12, ecs-v6-response-bits-13, ecs-v6-response-bits-14, ecs-v6-response-bits-15, ecs-v6-response-bits-16, ecs-v6-response-bits-17, ecs-v6-response-bits-18, ecs-v6-response-bits-19, ecs-v6-response-bits-20, ecs-v6-response-bits-21, ecs-v6-response-bits-22, ecs-v6-response-bits-23, ecs-v6-response-bits-24, ecs-v6-response-bits-25, ecs-v6-response-bits-26, ecs-v6-response-bits-27, ecs-v6-response-bits-28, ecs-v6-response-bits-29, ecs-v6-response-bits-30, ecs-v6-response-bits-31, ecs-v6-response-bits-32, ecs-v6-response-bits-33, ecs-v6-response-bits-34, ecs-v6-response-bits-35, ecs-v6-response-bits-36, ecs-v6-response-bits-37, ecs-v6-response-bits-38, ecs-v6-response-bits-39, ecs-v6-response-bits-40, ecs-v6-response-bits-41, ecs-v6-response-bits-42, ecs-v6-response-bits-43, ecs-v6-response-bits-44, ecs-v6-response-bits-45, ecs-v6-response-bits-46, ecs-v6-response-bits-47, ecs-v6-response-bits-48, ecs-v6-response-bits-49, ecs-v6-response-bits-50, ecs-v6-response-bits-51, ecs-v6-response-bits-52, ecs-v6-response-bits-53, ecs-v6-response-bits-54, ecs-v6-response-bits-55, ecs-v6-response-bits-56, ecs-v6-response-bits-57, ecs-v6-response-bits-58, ecs-v6-response-bits-59, ecs-v6-response-bits-60, ecs-v6-response-bits-61, ecs-v6-response-bits-62, ecs-v6-response-bits-63, ecs-v6-response-bits-64, ecs-v6-response-bits-65, ecs-v6-response-bits-66, ecs-v6-response-bits-67, ecs-v6-response-bits-68, ecs-v6-response-bits-69, ecs-v6-response-bits-70, ecs-v6-response-bits-71, ecs-v6-response-bits-72, ecs-v6-response-bits-73, ecs-v6-response-bits-74, ecs-v6-response-bits-75, ecs-v6-response-bits-76, ecs-v6-response-bits-77, ecs-v6-response-bits-78, ecs-v6-response-bits-79, ecs-v6-response-bits-80, ecs-v6-response-bits-81, ecs-v6-response-bits-82, ecs-v6-response-bits-83, ecs-v6-response-bits-84, ecs-v6-response-bits-85, ecs-v6-response-bits-86, ecs-v6-response-bits-87, ecs-v6-response-bits-88, ecs-v6-response-bits-89, ecs-v6-response-bits-90, ecs-v6-response-bits-91, ecs-v6-response-bits-92, ecs-v6-response-bits-93, ecs-v6-response-bits-94, ecs-v6-response-bits-95, ecs-v6-response-bits-96, ecs-v6-response-bits-97, ecs-v6-response-bits-98, ecs-v6-response-bits-99, ecs-v6-response-bits-100, ecs-v6-response-bits-101, ecs-v6-response-bits-102, ecs-v6-response-bits-103, ecs-v6-response-bits-104, ecs-v6-response-bits-105, ecs-v6-response-bits-106, ecs-v6-response-bits-107, ecs-v6-response-bits-108, ecs-v6-response-bits-109, ecs-v6-response-bits-110, ecs-v6-response-bits-111, ecs-v6-response-bits-112, ecs-v6-response-bits-113, ecs-v6-response-bits-114, ecs-v6-response-bits-115, ecs-v6-response-bits-116, ecs-v6-response-bits-117, ecs-v6-response-bits-118, ecs-v6-response-bits-119, ecs-v6-response-bits-120, ecs-v6-response-bits-121, ecs-v6-response-bits-122, ecs-v6-response-bits-123, ecs-v6-response-bits-124, ecs-v6-response-bits-125, ecs-v6-response-bits-126, ecs-v6-response-bits-127, ecs-v6-response-bits-128
+
+#################################
+# stats-carbon-blacklist	List of statistics that are prevented from being exported via Carbon
+#
+# stats-carbon-blacklist=cache-bytes, packetcache-bytes, special-memory-usage, ecs-v4-response-bits-1, ecs-v4-response-bits-2, ecs-v4-response-bits-3, ecs-v4-response-bits-4, ecs-v4-response-bits-5, ecs-v4-response-bits-6, ecs-v4-response-bits-7, ecs-v4-response-bits-8, ecs-v4-response-bits-9, ecs-v4-response-bits-10, ecs-v4-response-bits-11, ecs-v4-response-bits-12, ecs-v4-response-bits-13, ecs-v4-response-bits-14, ecs-v4-response-bits-15, ecs-v4-response-bits-16, ecs-v4-response-bits-17, ecs-v4-response-bits-18, ecs-v4-response-bits-19, ecs-v4-response-bits-20, ecs-v4-response-bits-21, ecs-v4-response-bits-22, ecs-v4-response-bits-23, ecs-v4-response-bits-24, ecs-v4-response-bits-25, ecs-v4-response-bits-26, ecs-v4-response-bits-27, ecs-v4-response-bits-28, ecs-v4-response-bits-29, ecs-v4-response-bits-30, ecs-v4-response-bits-31, ecs-v4-response-bits-32, ecs-v6-response-bits-1, ecs-v6-response-bits-2, ecs-v6-response-bits-3, ecs-v6-response-bits-4, ecs-v6-response-bits-5, ecs-v6-response-bits-6, ecs-v6-response-bits-7, ecs-v6-response-bits-8, ecs-v6-response-bits-9, ecs-v6-response-bits-10, ecs-v6-response-bits-11, ecs-v6-response-bits-12, ecs-v6-response-bits-13, ecs-v6-response-bits-14, ecs-v6-response-bits-15, ecs-v6-response-bits-16, ecs-v6-response-bits-17, ecs-v6-response-bits-18, ecs-v6-response-bits-19, ecs-v6-response-bits-20, ecs-v6-response-bits-21, ecs-v6-response-bits-22, ecs-v6-response-bits-23, ecs-v6-response-bits-24, ecs-v6-response-bits-25, ecs-v6-response-bits-26, ecs-v6-response-bits-27, ecs-v6-response-bits-28, ecs-v6-response-bits-29, ecs-v6-response-bits-30, ecs-v6-response-bits-31, ecs-v6-response-bits-32, ecs-v6-response-bits-33, ecs-v6-response-bits-34, ecs-v6-response-bits-35, ecs-v6-response-bits-36, ecs-v6-response-bits-37, ecs-v6-response-bits-38, ecs-v6-response-bits-39, ecs-v6-response-bits-40, ecs-v6-response-bits-41, ecs-v6-response-bits-42, ecs-v6-response-bits-43, ecs-v6-response-bits-44, ecs-v6-response-bits-45, ecs-v6-response-bits-46, ecs-v6-response-bits-47, ecs-v6-response-bits-48, ecs-v6-response-bits-49, ecs-v6-response-bits-50, ecs-v6-response-bits-51, ecs-v6-response-bits-52, ecs-v6-response-bits-53, ecs-v6-response-bits-54, ecs-v6-response-bits-55, ecs-v6-response-bits-56, ecs-v6-response-bits-57, ecs-v6-response-bits-58, ecs-v6-response-bits-59, ecs-v6-response-bits-60, ecs-v6-response-bits-61, ecs-v6-response-bits-62, ecs-v6-response-bits-63, ecs-v6-response-bits-64, ecs-v6-response-bits-65, ecs-v6-response-bits-66, ecs-v6-response-bits-67, ecs-v6-response-bits-68, ecs-v6-response-bits-69, ecs-v6-response-bits-70, ecs-v6-response-bits-71, ecs-v6-response-bits-72, ecs-v6-response-bits-73, ecs-v6-response-bits-74, ecs-v6-response-bits-75, ecs-v6-response-bits-76, ecs-v6-response-bits-77, ecs-v6-response-bits-78, ecs-v6-response-bits-79, ecs-v6-response-bits-80, ecs-v6-response-bits-81, ecs-v6-response-bits-82, ecs-v6-response-bits-83, ecs-v6-response-bits-84, ecs-v6-response-bits-85, ecs-v6-response-bits-86, ecs-v6-response-bits-87, ecs-v6-response-bits-88, ecs-v6-response-bits-89, ecs-v6-response-bits-90, ecs-v6-response-bits-91, ecs-v6-response-bits-92, ecs-v6-response-bits-93, ecs-v6-response-bits-94, ecs-v6-response-bits-95, ecs-v6-response-bits-96, ecs-v6-response-bits-97, ecs-v6-response-bits-98, ecs-v6-response-bits-99, ecs-v6-response-bits-100, ecs-v6-response-bits-101, ecs-v6-response-bits-102, ecs-v6-response-bits-103, ecs-v6-response-bits-104, ecs-v6-response-bits-105, ecs-v6-response-bits-106, ecs-v6-response-bits-107, ecs-v6-response-bits-108, ecs-v6-response-bits-109, ecs-v6-response-bits-110, ecs-v6-response-bits-111, ecs-v6-response-bits-112, ecs-v6-response-bits-113, ecs-v6-response-bits-114, ecs-v6-response-bits-115, ecs-v6-response-bits-116, ecs-v6-response-bits-117, ecs-v6-response-bits-118, ecs-v6-response-bits-119, ecs-v6-response-bits-120, ecs-v6-response-bits-121, ecs-v6-response-bits-122, ecs-v6-response-bits-123, ecs-v6-response-bits-124, ecs-v6-response-bits-125, ecs-v6-response-bits-126, ecs-v6-response-bits-127, ecs-v6-response-bits-128
+
+#################################
+# stats-rec-control-blacklist	List of statistics that are prevented from being exported via rec_control get-all
+#
+# stats-rec-control-blacklist=cache-bytes, packetcache-bytes, special-memory-usage, ecs-v4-response-bits-1, ecs-v4-response-bits-2, ecs-v4-response-bits-3, ecs-v4-response-bits-4, ecs-v4-response-bits-5, ecs-v4-response-bits-6, ecs-v4-response-bits-7, ecs-v4-response-bits-8, ecs-v4-response-bits-9, ecs-v4-response-bits-10, ecs-v4-response-bits-11, ecs-v4-response-bits-12, ecs-v4-response-bits-13, ecs-v4-response-bits-14, ecs-v4-response-bits-15, ecs-v4-response-bits-16, ecs-v4-response-bits-17, ecs-v4-response-bits-18, ecs-v4-response-bits-19, ecs-v4-response-bits-20, ecs-v4-response-bits-21, ecs-v4-response-bits-22, ecs-v4-response-bits-23, ecs-v4-response-bits-24, ecs-v4-response-bits-25, ecs-v4-response-bits-26, ecs-v4-response-bits-27, ecs-v4-response-bits-28, ecs-v4-response-bits-29, ecs-v4-response-bits-30, ecs-v4-response-bits-31, ecs-v4-response-bits-32, ecs-v6-response-bits-1, ecs-v6-response-bits-2, ecs-v6-response-bits-3, ecs-v6-response-bits-4, ecs-v6-response-bits-5, ecs-v6-response-bits-6, ecs-v6-response-bits-7, ecs-v6-response-bits-8, ecs-v6-response-bits-9, ecs-v6-response-bits-10, ecs-v6-response-bits-11, ecs-v6-response-bits-12, ecs-v6-response-bits-13, ecs-v6-response-bits-14, ecs-v6-response-bits-15, ecs-v6-response-bits-16, ecs-v6-response-bits-17, ecs-v6-response-bits-18, ecs-v6-response-bits-19, ecs-v6-response-bits-20, ecs-v6-response-bits-21, ecs-v6-response-bits-22, ecs-v6-response-bits-23, ecs-v6-response-bits-24, ecs-v6-response-bits-25, ecs-v6-response-bits-26, ecs-v6-response-bits-27, ecs-v6-response-bits-28, ecs-v6-response-bits-29, ecs-v6-response-bits-30, ecs-v6-response-bits-31, ecs-v6-response-bits-32, ecs-v6-response-bits-33, ecs-v6-response-bits-34, ecs-v6-response-bits-35, ecs-v6-response-bits-36, ecs-v6-response-bits-37, ecs-v6-response-bits-38, ecs-v6-response-bits-39, ecs-v6-response-bits-40, ecs-v6-response-bits-41, ecs-v6-response-bits-42, ecs-v6-response-bits-43, ecs-v6-response-bits-44, ecs-v6-response-bits-45, ecs-v6-response-bits-46, ecs-v6-response-bits-47, ecs-v6-response-bits-48, ecs-v6-response-bits-49, ecs-v6-response-bits-50, ecs-v6-response-bits-51, ecs-v6-response-bits-52, ecs-v6-response-bits-53, ecs-v6-response-bits-54, ecs-v6-response-bits-55, ecs-v6-response-bits-56, ecs-v6-response-bits-57, ecs-v6-response-bits-58, ecs-v6-response-bits-59, ecs-v6-response-bits-60, ecs-v6-response-bits-61, ecs-v6-response-bits-62, ecs-v6-response-bits-63, ecs-v6-response-bits-64, ecs-v6-response-bits-65, ecs-v6-response-bits-66, ecs-v6-response-bits-67, ecs-v6-response-bits-68, ecs-v6-response-bits-69, ecs-v6-response-bits-70, ecs-v6-response-bits-71, ecs-v6-response-bits-72, ecs-v6-response-bits-73, ecs-v6-response-bits-74, ecs-v6-response-bits-75, ecs-v6-response-bits-76, ecs-v6-response-bits-77, ecs-v6-response-bits-78, ecs-v6-response-bits-79, ecs-v6-response-bits-80, ecs-v6-response-bits-81, ecs-v6-response-bits-82, ecs-v6-response-bits-83, ecs-v6-response-bits-84, ecs-v6-response-bits-85, ecs-v6-response-bits-86, ecs-v6-response-bits-87, ecs-v6-response-bits-88, ecs-v6-response-bits-89, ecs-v6-response-bits-90, ecs-v6-response-bits-91, ecs-v6-response-bits-92, ecs-v6-response-bits-93, ecs-v6-response-bits-94, ecs-v6-response-bits-95, ecs-v6-response-bits-96, ecs-v6-response-bits-97, ecs-v6-response-bits-98, ecs-v6-response-bits-99, ecs-v6-response-bits-100, ecs-v6-response-bits-101, ecs-v6-response-bits-102, ecs-v6-response-bits-103, ecs-v6-response-bits-104, ecs-v6-response-bits-105, ecs-v6-response-bits-106, ecs-v6-response-bits-107, ecs-v6-response-bits-108, ecs-v6-response-bits-109, ecs-v6-response-bits-110, ecs-v6-response-bits-111, ecs-v6-response-bits-112, ecs-v6-response-bits-113, ecs-v6-response-bits-114, ecs-v6-response-bits-115, ecs-v6-response-bits-116, ecs-v6-response-bits-117, ecs-v6-response-bits-118, ecs-v6-response-bits-119, ecs-v6-response-bits-120, ecs-v6-response-bits-121, ecs-v6-response-bits-122, ecs-v6-response-bits-123, ecs-v6-response-bits-124, ecs-v6-response-bits-125, ecs-v6-response-bits-126, ecs-v6-response-bits-127, ecs-v6-response-bits-128
+
+
+#################################
 # stats-ringbuffer-entries	maximum number of packets to store statistics for
 #
 # stats-ringbuffer-entries=10000
 
+#################################
+# stats-snmp-blacklist	List of statistics that are prevented from being exported via SNMP
+#
+# stats-snmp-blacklist=cache-bytes, packetcache-bytes, special-memory-usage, ecs-v4-response-bits-1, ecs-v4-response-bits-2, ecs-v4-response-bits-3, ecs-v4-response-bits-4, ecs-v4-response-bits-5, ecs-v4-response-bits-6, ecs-v4-response-bits-7, ecs-v4-response-bits-8, ecs-v4-response-bits-9, ecs-v4-response-bits-10, ecs-v4-response-bits-11, ecs-v4-response-bits-12, ecs-v4-response-bits-13, ecs-v4-response-bits-14, ecs-v4-response-bits-15, ecs-v4-response-bits-16, ecs-v4-response-bits-17, ecs-v4-response-bits-18, ecs-v4-response-bits-19, ecs-v4-response-bits-20, ecs-v4-response-bits-21, ecs-v4-response-bits-22, ecs-v4-response-bits-23, ecs-v4-response-bits-24, ecs-v4-response-bits-25, ecs-v4-response-bits-26, ecs-v4-response-bits-27, ecs-v4-response-bits-28, ecs-v4-response-bits-29, ecs-v4-response-bits-30, ecs-v4-response-bits-31, ecs-v4-response-bits-32, ecs-v6-response-bits-1, ecs-v6-response-bits-2, ecs-v6-response-bits-3, ecs-v6-response-bits-4, ecs-v6-response-bits-5, ecs-v6-response-bits-6, ecs-v6-response-bits-7, ecs-v6-response-bits-8, ecs-v6-response-bits-9, ecs-v6-response-bits-10, ecs-v6-response-bits-11, ecs-v6-response-bits-12, ecs-v6-response-bits-13, ecs-v6-response-bits-14, ecs-v6-response-bits-15, ecs-v6-response-bits-16, ecs-v6-response-bits-17, ecs-v6-response-bits-18, ecs-v6-response-bits-19, ecs-v6-response-bits-20, ecs-v6-response-bits-21, ecs-v6-response-bits-22, ecs-v6-response-bits-23, ecs-v6-response-bits-24, ecs-v6-response-bits-25, ecs-v6-response-bits-26, ecs-v6-response-bits-27, ecs-v6-response-bits-28, ecs-v6-response-bits-29, ecs-v6-response-bits-30, ecs-v6-response-bits-31, ecs-v6-response-bits-32, ecs-v6-response-bits-33, ecs-v6-response-bits-34, ecs-v6-response-bits-35, ecs-v6-response-bits-36, ecs-v6-response-bits-37, ecs-v6-response-bits-38, ecs-v6-response-bits-39, ecs-v6-response-bits-40, ecs-v6-response-bits-41, ecs-v6-response-bits-42, ecs-v6-response-bits-43, ecs-v6-response-bits-44, ecs-v6-response-bits-45, ecs-v6-response-bits-46, ecs-v6-response-bits-47, ecs-v6-response-bits-48, ecs-v6-response-bits-49, ecs-v6-response-bits-50, ecs-v6-response-bits-51, ecs-v6-response-bits-52, ecs-v6-response-bits-53, ecs-v6-response-bits-54, ecs-v6-response-bits-55, ecs-v6-response-bits-56, ecs-v6-response-bits-57, ecs-v6-response-bits-58, ecs-v6-response-bits-59, ecs-v6-response-bits-60, ecs-v6-response-bits-61, ecs-v6-response-bits-62, ecs-v6-response-bits-63, ecs-v6-response-bits-64, ecs-v6-response-bits-65, ecs-v6-response-bits-66, ecs-v6-response-bits-67, ecs-v6-response-bits-68, ecs-v6-response-bits-69, ecs-v6-response-bits-70, ecs-v6-response-bits-71, ecs-v6-response-bits-72, ecs-v6-response-bits-73, ecs-v6-response-bits-74, ecs-v6-response-bits-75, ecs-v6-response-bits-76, ecs-v6-response-bits-77, ecs-v6-response-bits-78, ecs-v6-response-bits-79, ecs-v6-response-bits-80, ecs-v6-response-bits-81, ecs-v6-response-bits-82, ecs-v6-response-bits-83, ecs-v6-response-bits-84, ecs-v6-response-bits-85, ecs-v6-response-bits-86, ecs-v6-response-bits-87, ecs-v6-response-bits-88, ecs-v6-response-bits-89, ecs-v6-response-bits-90, ecs-v6-response-bits-91, ecs-v6-response-bits-92, ecs-v6-response-bits-93, ecs-v6-response-bits-94, ecs-v6-response-bits-95, ecs-v6-response-bits-96, ecs-v6-response-bits-97, ecs-v6-response-bits-98, ecs-v6-response-bits-99, ecs-v6-response-bits-100, ecs-v6-response-bits-101, ecs-v6-response-bits-102, ecs-v6-response-bits-103, ecs-v6-response-bits-104, ecs-v6-response-bits-105, ecs-v6-response-bits-106, ecs-v6-response-bits-107, ecs-v6-response-bits-108, ecs-v6-response-bits-109, ecs-v6-response-bits-110, ecs-v6-response-bits-111, ecs-v6-response-bits-112, ecs-v6-response-bits-113, ecs-v6-response-bits-114, ecs-v6-response-bits-115, ecs-v6-response-bits-116, ecs-v6-response-bits-117, ecs-v6-response-bits-118, ecs-v6-response-bits-119, ecs-v6-response-bits-120, ecs-v6-response-bits-121, ecs-v6-response-bits-122, ecs-v6-response-bits-123, ecs-v6-response-bits-124, ecs-v6-response-bits-125, ecs-v6-response-bits-126, ecs-v6-response-bits-127, ecs-v6-response-bits-128
+
+{{ with getenv "RECURSOR_TCP_FAST_OPEN" }}
+#################################
+# tcp-fast-open	Enable TCP Fast Open support on the listening sockets, using the supplied numerical value as the queue size
+tcp-fast-open={{.}}
+
+{{ end }}
 {{ with getenv "RECURSOR_THREADS" }}
 #################################
 # threads	Launch this number of threads
@@ -498,10 +742,58 @@ threads={{.}}
 trace={{.}}
 
 {{ end }}
+{{ with getenv "RECURSOR_UDP_SOURCE_PORT_AVOID" }}
+#################################
+# udp-source-port-avoid	List of comma separated UDP port number to avoid
+udp-source-port-avoid={{.}}
+
+{{ end }}
+{{ with getenv "RECURSOR_UDP_SOURCE_PORT_MAX" }}
+#################################
+# udp-source-port-max	Maximum UDP port to bind on
+udp-source-port-max={{.}}
+
+{{ end }}
+{{ with getenv "RECURSOR_UDP_SOURCE_PORT_MIN" }}
+#################################
+# udp-source-port-min	Minimum UDP port to bind on
+udp-source-port-min={{.}}
+
+{{ end }}
 {{ with getenv "RECURSOR_UDP_TRUNCATION_THRESHOLD" }}
 #################################
 # udp-truncation-threshold	Maximum UDP response size before we truncate
 udp-truncation-threshold={{.}}
+
+{{ end }}
+{{ with getenv "RECURSOR_UNIQUE_RESPONSE_DB_SIZE" }}
+#################################
+# unique-response-db-size	Size of the DB used to track unique responses in terms of number of cells. Defaults to 67108864
+unique-response-db-size={{.}}
+
+{{ end }}
+{{ with getenv "RECURSOR_UNIQUE_RESPONSE_HISTORY_DIR" }}
+#################################
+# unique-response-history-dir	Persist unique response tracking data here to persist between restarts
+unique-response-history-dir={{.}}
+
+{{ end }}
+{{ with getenv "RECURSOR_UNIQUE_RESPONSE_LOG" }}
+#################################
+# unique-response-log	Log unique responses
+unique-response-log={{.}}
+
+{{ end }}
+{{ with getenv "RECURSOR_UNIQUE_RESPONSE_PB_TAG" }}
+#################################
+# unique-response-pb-tag	If protobuf is configured, the tag to use for messages containing unique DNS responses. Defaults to 'pdns-udr'
+unique-response-pb-tag={{.}}
+
+{{ end }}
+{{ with getenv "RECURSOR_UNIQUE_RESPONSE_TRACKING" }}
+#################################
+# unique-response-tracking	Track unique responses (tuple of query name, type and RR).
+unique-response-tracking={{.}}
 
 {{ end }}
 {{ with getenv "RECURSOR_USE_INCOMING_EDNS_SUBNET" }}
@@ -529,6 +821,12 @@ webserver={{.}}
 webserver-address={{.}}
 
 {{ end }}
+{{ with getenv "RECURSOR_WEBSERVER_LOGLEVEL" }}
+#################################
+# webserver-loglevel	Amount of logging in the webserver (none, normal, detailed)
+webserver-loglevel={{.}}
+
+{{ end }}
 {{ with getenv "RECURSOR_WEBSERVER_ALLOW_FROM" }}
 #################################
 # webserver-allow-from	Webserver access is only allowed from these subnets
@@ -552,4 +850,14 @@ webserver-port={{.}}
 #
 write-pid=no
 
+{{ with getenv "RECURSOR_XPF_ALLOW_FROM" }}
+#################################
+# xpf-allow-from	XPF information is only processed from these subnets
+xpf-allow-from={{.}}
 
+{{ end }}
+{{ with getenv "RECURSOR_XPF_RR_CODE" }}
+#################################
+# xpf-rr-code	XPF option code to use
+xpf-rr-code={{.}}
+{{ end }}

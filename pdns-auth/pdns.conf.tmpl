@@ -2,7 +2,6 @@
 {{ with getenv "PDNS_8BIT_DNS" }}
 #################################
 # 8bit-dns	Allow 8bit dns queries
-#
 8bit-dns={{.}}
 
 {{ end }}
@@ -24,26 +23,15 @@ allow-dnsupdate-from={{.}}
 allow-notify-from={{.}}
 
 {{ end }}
-{{ with getenv "PDNS_ALLOW_RECURSION" }}
-#################################
-# allow-recursion	List of subnets that are allowed to recurse
-allow-recursion={{.}}
-
-{{ else }}
-allow-recursion=127.0.0.1
-
-{{ end }}
 {{ with getenv "PDNS_ALLOW_UNSIGNED_NOTIFY" }}
 #################################
 # allow-unsigned-notify	Allow unsigned notifications for TSIG secured domains
-#
 allow-unsigned-notify={{.}}
 
 {{ end }}
 {{ with getenv "PDNS_ALLOW_UNSIGNED_SUPERMASTER" }}
 #################################
 # allow-unsigned-supermaster	Allow supermasters to create zones without TSIG signed NOTIFY
-#
 allow-unsigned-supermaster={{.}}
 
 {{ end }}
@@ -71,22 +59,15 @@ api={{.}}
 api-key={{.}}
 
 {{ end }}
-{{ with getenv "PDNS_API_LOGFILE" }}
+{{ with getenv "PDNS_AXFR_FETCH_TIMEOUT" }}
 #################################
-# api-logfile	Location of the server logfile (used by the REST API)
-api-logfile={{.}}
-
-{{ end }}
-{{ with getenv "PDNS_API_READONLY" }}
-#################################
-# api-readonly	Disallow data modification through the REST API when set
-api-readonly={{.}}
+# axfr-fetch-timeout	Maximum time in seconds for inbound AXFR to start or be idle after starting
+axfr-fetch-timeout={{.}}
 
 {{ end }}
 {{ with getenv "PDNS_AXFR_LOWER_SERIAL" }}
 #################################
 # axfr-lower-serial	Also AXFR a zone from a master with a lower serial
-#
 axfr-lower-serial={{.}}
 
 {{ end }}
@@ -96,10 +77,22 @@ axfr-lower-serial={{.}}
 cache-ttl={{.}}
 
 {{ end }}
+{{ with getenv "PDNS_CARBON_INSTANCE" }}
+#################################
+# carbon-instance	If set overwrites the the instance name default
+carbon-instance={{.}}
+
+{{end}}
 {{ with getenv "PDNS_CARBON_INTERVAL" }}
 #################################
 # carbon-interval	Number of seconds between carbon (graphite) updates
 carbon-interval={{.}}
+
+{{ end }}
+{{ with getenv "PDNS_CARBON_NAMESPACE" }}
+#################################
+# carbon-namespace	If set overwrites the first part of the carbon string
+carbon-namespace={{.}}
 
 {{ end }}
 {{ with getenv "PDNS_CARBON_OURNAME" }}
@@ -122,13 +115,18 @@ chroot={{.}}
 {{ end }}
 #################################
 # config-dir	Location of configuration directory (pdns.conf)
-#
 config-dir=/etc/powerdns
 
 {{ with getenv "PDNS_CONFIG_NAME" }}
 #################################
 # config-name	Name of this virtual configuration - will rename the binary image
 config-name={{.}}
+
+{{ end }}
+{{ with getenv "PDNS_CONSISTENT_BACKENDS" }}
+#################################
+# consistent-backends	Assume individual domains are not divided over backends. Send only ANY lookup operations to the backend to reduce the number of lookups
+consistent-backends={{.}}
 
 {{ end }}
 {{ with getenv "PDNS_CONTROL_CONSOLE" }}
@@ -142,6 +140,12 @@ control-console={{.}}
 #
 daemon=no
 
+{{ with getenv "PDNS_DEFAULT_API_RECTIFY" }}
+#################################
+# default-api-rectify	Default API-RECTIFY value for zones
+default-api-rectify={{.}}
+
+{{ end }}
 {{ with getenv "PDNS_DEFAULT_KSK_ALGORITHMS" }}
 #################################
 # default-ksk-algorithms	Default KSK algorithms
@@ -152,6 +156,24 @@ default-ksk-algorithms={{.}}
 #################################
 # default-ksk-size	Default KSK size (0 means default)
 default-ksk-size={{.}}
+
+{{ end }}
+{{ with getenv "PDNS_DEFAULT_PUBLISH_CDNSKEY" }}
+#################################
+# default-publish-cdnskey	Default value for PUBLISH-CDNSKEY
+default-publish-cdnskey={{.}}
+
+{{ end }}
+{{ with getenv "PDNS_DEFAULT_PUBLISH_CDS" }}
+#################################
+# default-publish-cds	Default value for PUBLISH-CDS
+default-publish-cds={{.}}
+
+{{ end }}
+{{ with getenv "PDNS_DEFAULT_SOA_CONTENT" }}
+#################################
+# default-soa-content	Default SOA content
+default-soa-content={{.}}
 
 {{ end }}
 {{ with getenv "PDNS_DEFAULT_SOA_EDIT" }}
@@ -166,28 +188,16 @@ default-soa-edit={{.}}
 default-soa-edit-signed={{.}}
 
 {{ end }}
-{{ with getenv "PDNS_DEFAULT_SOA_MAIL" }}
-#################################
-# default-soa-mail	mail address to insert in the SOA record if none set in the backend
-default-soa-mail={{.}}
-
-{{ end }}
-{{ with getenv "PDNS_DEFAULT_SOA_NAME" }}
-#################################
-# default-soa-name	name to insert in the SOA record if none set in the backend
-default-soa-name={{.}}
-
-{{ end }}
 {{ with getenv "PDNS_DEFAULT_TTL" }}
 #################################
 # default-ttl	Seconds a result is valid if not set otherwise
 default-ttl={{.}}
 
 {{ end }}
-{{ with getenv "PDNS_DEFAULT_ZSK_ALGORITHMS" }}
+{{ with getenv "PDNS_DEFAULT_ZSK_ALGORITHM" }}
 #################################
-# default-zsk-algorithms	Default ZSK algorithms
-default-zsk-algorithms={{.}}
+# default-zsk-algorithm	Default ZSK algorithm
+default-zsk-algorithm={{.}}
 
 {{ end }}
 {{ with getenv "PDNS_DEFAULT_ZSK_SIZE" }}
@@ -219,12 +229,6 @@ disable-axfr-rectify={{.}}
 #
 disable-syslog=yes
 
-{{ with getenv "PDNS_DISABLE_TCP" }}
-#################################
-# disable-tcp	Do not listen to TCP queries
-disable-tcp={{.}}
-
-{{ end }}
 {{ with getenv "PDNS_DISTRIBUTOR_THREADS" }}
 #################################
 # distributor-threads	Default number of Distributor (backend) threads to start
@@ -250,16 +254,9 @@ dnssec-key-cache-ttl={{.}}
 dnsupdate={{.}}
 
 {{ end }}
-{{ with getenv "PDNS_DO_IPV6_ADDITIONAL_PROCESSING" }}
-#################################
-# do-ipv6-additional-processing	Do AAAA additional processing
-do-ipv6-additional-processing={{.}}
-
-{{ end }}
 {{ with getenv "PDNS_DOMAIN_METADATA_CACHE_TTL" }}
 #################################
 # domain-metadata-cache-ttl	Seconds to cache domain metadata from the database
-#
 domain-metadata-cache-ttl={{.}}
 
 {{ end }}
@@ -269,16 +266,22 @@ domain-metadata-cache-ttl={{.}}
 edns-subnet-processing={{.}}
 
 {{ end }}
+{{ with getenv "PDNS_ENABLE_LUA_RECORDS" }}
+#################################
+# enable-lua-records	Process LUA records for all zones (metadata overrides this)
+enable-lua-records={{.}}
+
+{{ end }}
 {{ with getenv "PDNS_ENTROPY_SOURCE" }}
 #################################
 # entropy-source	If set, read entropy from this file
 entropy-source={{.}}
 
 {{ end }}
-{{ with getenv "PDNS_EXPERIMENTAL_LUA_POLICY_SCRIPT" }}
+{{ with getenv "PDNS_EXPAND_ALIAS" }}
 #################################
-# experimental-lua-policy-script	Lua script for the policy engine
-experimental-lua-policy-script={{.}}
+# expand-alias	Expand ALIAS records
+expand-alias={{.}}
 
 {{ end }}
 {{ with getenv "PDNS_FORWARD_DNSUPDATE" }}
@@ -287,10 +290,15 @@ experimental-lua-policy-script={{.}}
 forward-dnsupdate={{.}}
 
 {{ end }}
+{{ with getenv "PDNS_FORWARD_NOTIFY" }}
+#################################
+# forward-notify	IP addresses to forward received notifications to regardless of master or slave settings
+forward-notify={{.}}
+
+{{ end }}
 #################################
 # guardian	Run within a guardian process
-#
-guardian=yes
+guardian=no
 
 #################################
 # include-dir	Include *.conf files from this directory
@@ -309,31 +317,29 @@ launch=gpgsql
 #
 # load-modules=
 
+{{ with getenv "PDNS_LOCAL_ADDRESS" }}
 #################################
 # local-address	Local IP addresses to which we bind
-#
-# local-address=0.0.0.0
+local-address={{.}}
 
+{{ end }}
 #################################
 # local-address-nonexist-fail	Fail to start if one or more of the local-address's do not exist on this server
 #
 # local-address-nonexist-fail=yes
 
+{{ with getenv "PDNS_LOCAL_IPV6" }}
 #################################
 # local-ipv6	Local IP address to which we bind
-#
-# local-ipv6=::
+local-ipv6={{.}}
 
-#################################
-# local-ipv6-nonexist-fail	Fail to start if one or more of the local-ipv6 addresses do not exist on this server
-#
-# local-ipv6-nonexist-fail=yes
-
+{{ end }}
+{{ with getenv "PDNS_LOCAL_PORT" }}
 #################################
 # local-port	The port on which we listen
-#
-# local-port=53
+local-port={{.}}
 
+{{ end }}
 #################################
 # log-dns-details	If PDNS should log DNS non-erroneous details
 #
@@ -355,9 +361,34 @@ launch=gpgsql
 # loglevel=4
 
 #################################
+# lua-axfr-script	Script to be used to edit incoming AXFRs
+#
+# lua-axfr-script=
+
+#################################
+# lua-dnsupdate-policy-script	Lua script with DNS update policy handler
+#
+# lua-dnsupdate-policy-script=
+
+#################################
+# lua-health-checks-expire-delay	Stops doing health checks after the record hasn't been used for that delay (in seconds)
+#
+# lua-health-checks-expire-delay=3600
+
+#################################
+# lua-health-checks-interval	LUA records health checks monitoring interval in seconds
+#
+# lua-health-checks-interval=5
+
+#################################
 # lua-prequery-script	Lua script with prequery handler (DO NOT USE)
 #
 # lua-prequery-script=
+
+#################################
+# lua-records-exec-limit	LUA records scripts execution limit (instructions count). Values <= 0 mean no limit
+#
+# lua-records-exec-limit=1000
 
 {{ with getenv "PDNS_MASTER" }}
 #################################
@@ -377,10 +408,22 @@ max-cache-entries={{.}}
 max-ent-entries={{.}}
 
 {{ end }}
+{{ with getenv "PDNS_MAX_GENERATE_STEPS" }}
+#################################
+# max-generate-steps	Maximum number of $GENERATE steps when loading a zone from a file
+max-generate-steps={{.}}
+
+{{ end }}
 {{ with getenv "PDNS_MAX_NSEC3_ITERATIONS" }}
 #################################
 # max-nsec3-iterations	Limit the number of NSEC3 hash iterations
 max-nsec3-iterations={{.}}
+
+{{ end }}
+{{ with getenv "PDNS_MAX_PACKET_CACHE_ENTRIES" }}
+#################################
+# max-packet-cache-entries	Maximum number of entries in the packet cache
+max-packet-cache-entries={{.}}
 
 {{ end }}
 {{ with getenv "PDNS_MAX_QUEUE_LENGTH" }}
@@ -395,10 +438,28 @@ max-queue-length={{.}}
 max-signature-cache-entries={{.}}
 
 {{ end }}
+{{ with getenv "PDNS_MAX_TCP_CONNECTION_DURATION" }}
+#################################
+# max-tcp-connection-duration	Maximum time in seconds that a TCP DNS connection is allowed to stay open.
+max-tcp-connection-duration={{.}}
+
+{{ end }}
 {{ with getenv "PDNS_MAX_TCP_CONNECTIONS" }}
 #################################
 # max-tcp-connections	Maximum number of TCP connections
 max-tcp-connections={{.}}
+
+{{ end }}
+{{ with getenv "PDNS_MAX_TCP_CONNECTIONS_PER_CLIENT" }}
+#################################
+# max-tcp-connections-per-client	Maximum number of simultaneous TCP connections per client
+max-tcp-connections-per-client={{.}}
+
+{{ end }}
+{{ with getenv "PDNS_MAX_TCP_TRANSACTIONS_PER_CONN" }}
+#################################
+# max-tcp-transactions-per-conn	Maximum number of subsequent queries per TCP connection
+max-tcp-transactions-per-conn={{.}}
 
 {{ end }}
 #################################
@@ -427,12 +488,6 @@ non-local-bind={{.}}
 #################################
 # only-notify	Only send AXFR NOTIFY to these IP addresses or netmasks
 only-notify={{.}}
-
-{{ end }}
-{{ with getenv "PDNS_OUT_OF_ZONE_ADDITIONAL_PROCESSING" }}
-#################################
-# out-of-zone-additional-processing	Do out of zone additional processing
-out-of-zone-additional-processing={{.}}
 
 {{ end }}
 {{ with getenv "PDNS_OUTGOING_AXFR_EXPAND_ALIAS" }}
@@ -490,16 +545,10 @@ queue-limit={{.}}
 receiver-threads={{.}}
 
 {{ end }}
-{{ with getenv "PDNS_RECURSIVE_CACHE_TTL" }}
+{{ with getenv "PDNS_RESOLVER" }}
 #################################
-# recursive-cache-ttl	Seconds to store packets for recursive queries in the PacketCache
-recursive-cache-ttl={{.}}
-
-{{ end }}
-{{ with getenv "PDNS_RECURSOR" }}
-#################################
-# recursor	If recursion is desired, IP address of a recursing nameserver
-recursor={{.}}
+# resolver	Use this resolver for ALIAS and the internal stub resolver
+resolver={{.}}
 
 {{ end }}
 {{ with getenv "PDNS_RETRIEVAL_THREADS" }}
@@ -517,10 +566,22 @@ reuseport={{.}}
 reuseport=yes
 
 {{ end }}
+{{ with getenv "PDNS_RNG" }}
+#################################
+# rng	Specify the random number generator to use. Valid values are auto,sodium,openssl,getrandom,arc4random,urandom.
+rng={{.}}
+
+{{ end }}
 {{ with getenv "PDNS_SECURITY_POLL_SUFFIX" }}
 #################################
 # security-poll-suffix	Domain name from which to query security update notifications
 security-poll-suffix={{.}}
+
+{{ end }}
+{{ with getenv "PDNS_SEND_SIGNED_NOTIFY" }}
+#################################
+# send-signed-notify	Send TSIG secured NOTIFY if TSIG key is configured for a domain
+send-signed-notify={{.}}
 
 {{ end }}
 {{ with getenv "PDNS_SERVER_ID" }}
@@ -563,35 +624,17 @@ slave-cycle-interval={{.}}
 slave-renotify={{.}}
 
 {{ end }}
-{{ with getenv "PDNS_SOA_EXPIRE_DEFAULT" }}
-#################################
-# soa-expire-default	Default SOA expire
-soa-expire-default={{.}}
-
-{{ end }}
-{{ with getenv "PDNS_SOA_MINIMUM_TTL" }}
-#################################
-# soa-minimum-ttl	Default SOA minimum ttl
-soa-minimum-ttl={{.}}
-
-{{ end }}
-{{ with getenv "PDNS_SOA_REFRESH_DEFAULT" }}
-#################################
-# soa-refresh-default	Default SOA refresh
-soa-refresh-default={{.}}
-
-{{ end }}
-{{ with getenv "PDNS_SOA_RETRY_DEFAULT" }}
-#################################
-# soa-retry-default	Default SOA retry
-soa-retry-default={{.}}
-
-{{ end }}
 #################################
 # socket-dir	Where the controlsocket will live, /var/run when unset and not chrooted
 #
 # socket-dir=
 
+{{with getenv "PDNS_SUPERSLAVE" }}
+#################################
+# superslave	Act as a superslave
+superslave={{.}}
+
+{{ end }}
 #################################
 # tcp-control-address	If set, PowerDNS can be controlled over TCP on this address
 #
@@ -613,6 +656,16 @@ soa-retry-default={{.}}
 # tcp-control-secret=
 
 #################################
+# tcp-fast-open	Enable TCP Fast Open support on the listening sockets, using the supplied numerical value as the queue size
+#
+# tcp-fast-open=0
+
+#################################
+# tcp-idle-timeout	Maximum time in seconds that a TCP DNS connection is allowed to stay open while being idle
+#
+# tcp-idle-timeout=5
+
+#################################
 # traceback-handler	Enable the traceback handler (Linux only)
 #
 # traceback-handler=yes
@@ -628,6 +681,11 @@ soa-retry-default={{.}}
 udp-truncation-threshold={{.}}
 
 {{ end }}
+#################################
+# upgrade-unknown-types	Transparently upgrade known TYPExxx records. Recommended to keep off, except for PowerDNS upgrades until data sources are cleaned up
+#
+# upgrade-unknown-types=no
+
 {{ with getenv "PDNS_VERSION_STRING" }}
 #################################
 # version-string	PowerDNS version in packets - full, anonymous, powerdns or custom
@@ -653,6 +711,18 @@ webserver-address={{.}}
 #################################
 # webserver-allow-from	Webserver access is only allowed from these subnets
 webserver-allow-from={{.}}
+
+{{ end }}
+{{ with getenv "PDNS_WEBSERVER_LOGLEVEL" }}
+#################################
+# webserver-loglevel	Amount of logging in the webserver (none, normal, detailed)
+webserver-loglevel={{.}}
+
+{{ end }}
+{{with getenv "PDNS_WEBSERVER_MAX_BODYSIZE" }}
+#################################
+# webserver-max-bodysize	Webserver/API maximum request/response body size in megabytes
+webserver-max-bodysize={{.}}
 
 {{ end }}
 {{ with getenv "PDNS_WEBSERVER_PASSWORD" }}

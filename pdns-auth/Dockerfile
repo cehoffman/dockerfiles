@@ -1,4 +1,4 @@
-FROM quay.io/cehoffman/pdns-base
+FROM quay.io/cehoffman/pdns-base:4.4
 
 COPY pdns.conf.tmpl /etc/confd/templates/
 COPY pdns.toml /etc/confd/conf.d/

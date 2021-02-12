@@ -1,4 +1,4 @@
-FROM quay.io/cehoffman/pdns-base
+FROM quay.io/cehoffman/pdns-base:4.4
 
 COPY recursor.conf.tmpl /etc/confd/templates/
 COPY recursor.toml /etc/confd/conf.d/

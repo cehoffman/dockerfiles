@@ -7,4 +7,7 @@ fi
 
 /usr/local/bin/confd --onetime --backend env
 
+mkdir -p "/var/run/pdns-recursor"
+chown root:pdns "/var/run/pdns-recursor"
+
 exec pdns_recursor
